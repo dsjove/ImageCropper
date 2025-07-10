@@ -2,10 +2,17 @@ import SwiftUI
 
 // TODO: use previously set background and foreground colors
 public struct CroppedImagePreview: View {
-	public let image: UIImage?
-	public let transform: CroppingState
-	public let cropRect: CGRect?
-	public var opacity: Double = 0.4
+	private let image: UIImage?
+	private let transform: CroppingState
+	private let cropRect: CGRect?
+	private let opacity: Double
+
+	public init(image: UIImage?, transform: CroppingState, cropRect: CGRect?, opacity: Double = 0.4) {
+		self.image = image
+		self.transform = transform
+		self.cropRect = cropRect
+		self.opacity = opacity
+	}
 
 	public var body: some View {
 		ZStack {

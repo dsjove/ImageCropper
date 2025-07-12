@@ -16,6 +16,7 @@ public struct CroppedImagePreview: View {
 
 	public var body: some View {
 		ZStack {
+			Color.black.ignoresSafeArea()
 			if let image {
 				if transform.fill {
 					if opacity > 0.0 {

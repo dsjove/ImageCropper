@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 
-public struct UIColorPickerView: UIViewControllerRepresentable {
+public struct ColorPickerView: UIViewControllerRepresentable {
 	private let title: String
 	@Binding private var selectedColor: Color
 
@@ -11,9 +11,9 @@ public struct UIColorPickerView: UIViewControllerRepresentable {
 	}
 
 	public class Coordinator: NSObject, UIColorPickerViewControllerDelegate {
-		var parent: UIColorPickerView
+		var parent: ColorPickerView
 
-		init(parent: UIColorPickerView) {
+		init(parent: ColorPickerView) {
 			self.parent = parent
 		}
 

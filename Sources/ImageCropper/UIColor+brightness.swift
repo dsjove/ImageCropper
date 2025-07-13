@@ -11,3 +11,12 @@ public extension UIColor {
 		brightness > 0.5
 	}
 }
+
+public extension UIImage {
+	func resized(_ targetSize: CGSize) -> UIImage {
+		let renderer = UIGraphicsImageRenderer(size: targetSize)
+		return renderer.image { _ in
+			self.draw(in: CGRect(origin: .zero, size: targetSize))
+		}
+	}
+}

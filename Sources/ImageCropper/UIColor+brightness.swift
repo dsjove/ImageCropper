@@ -13,6 +13,13 @@ public extension UIColor {
 }
 
 public extension UIImage {
+	convenience init?(data: Data?) {
+		guard let data = data else {
+			return nil
+		}
+		self.init(data: data)
+	}
+
 	func shrinkTo(_ targetSize: CGSize) -> UIImage {
 		if self.size.width <= targetSize.width && self.size.height <= targetSize.height {
 			return self

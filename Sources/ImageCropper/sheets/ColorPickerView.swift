@@ -37,6 +37,7 @@ public struct ColorPickerView: UIViewControllerRepresentable {
 			//picker.supportsEyedropper = false
 		}
 		picker.selectedColor = UIColor(selectedColor)
+		picker.view.backgroundColor = .systemBackground
 		return picker
 	}
 

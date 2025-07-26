@@ -16,17 +16,17 @@ struct ImageGeometryModifier: ViewModifier {
 
         let warpedQuad = [topLeft, topRight, bottomRight, bottomLeft]
 
-        let projection = ProjectionTransform(
-            CGAffineTransform.quadrilateralWarp(from: CGRect(x: 0, y: 0, width: w, height: h),
-                                                to: warpedQuad)
-        )
+//        let projection = ProjectionTransform(
+//            CGAffineTransform.quadrilateralWarp(from: CGRect(x: 0, y: 0, width: w, height: h),
+//                                                to: warpedQuad)
+//        )
 
         return content
             .scaleEffect(x: geometry.flipX ? -geometry.scale.width : geometry.scale.width,
                          y: geometry.flipY ? -geometry.scale.height : geometry.scale.height,
                          anchor: .center)
             .rotationEffect(.degrees(geometry.rotation), anchor: .center)
-            .projectionEffect(projection)
+            //.projectionEffect(projection)
             .offset(geometry.offset)
             .ifLet(geometry.cropRect) { view, rect in
                 view

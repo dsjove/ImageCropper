@@ -1,6 +1,5 @@
 import SwiftUI
 
-// TODO: use previously set background and foreground colors
 public struct CroppedImagePreview: View {
 	private let image: UIImage?
 	private let transform: CroppingState
@@ -16,7 +15,7 @@ public struct CroppedImagePreview: View {
 
 	public var body: some View {
 		ZStack {
-			Color.black.ignoresSafeArea()
+			Color(.systemBackground).ignoresSafeArea()
 			if let image {
 				if transform.fill {
 					if opacity > 0.0 {
@@ -33,14 +32,14 @@ public struct CroppedImagePreview: View {
 				}
 			} else {
 				Image(systemName: "photo")
-					.foregroundStyle(.white)
+					.foregroundStyle(.primary)
 					.font(.largeTitle)
 			}
 			if let cropRect, transform.fill {
 				Rectangle()
 					.path(in: cropRect)
 					.stroke(style: StrokeStyle(lineWidth: 2, dash: [10]))
-					.foregroundColor(.white)
+					.foregroundColor(.primary)
 			}
 		}
 	}

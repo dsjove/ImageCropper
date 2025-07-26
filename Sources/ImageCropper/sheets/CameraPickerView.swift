@@ -31,7 +31,9 @@ public struct CameraPickerView: UIViewControllerRepresentable {
 
 		public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
 			if let selectedImage = info[.originalImage] as? UIImage {
-				parent.image = selectedImage
+				DispatchQueue.main.async {
+					self.parent.image = selectedImage
+				}
 			}
 			parent.presentationMode.wrappedValue.dismiss()
 		}

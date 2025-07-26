@@ -4,6 +4,9 @@ import SwiftUI
 //TODO: allow for non-square crop
 //TODO: use anchor if fill, otherwise center of image
 public struct CroppingState {
+	public var userGestured: Bool = false
+	public var cropping: CGRect = .zero
+
 	public let fill: Bool
 	public let maxScale: Double
 	public private(set) var offset: CGSize = .zero
@@ -26,10 +29,11 @@ public struct CroppingState {
 		if minLength <= 0 {
 			return
 		}
+		self.cropping = cropping
 
 		offset = .zero
 		lastOffset = .zero
-		setClampedScale(imgSize: imgSize, 0, fill: fill, cropping: cropping)
+		setClampedScale(imgSize: imgSize, 0, fill: fill)
 		endScale()
 		rotation = .zero
 		lastRotation = .zero
@@ -38,16 +42,17 @@ public struct CroppingState {
 	}
 
 	public mutating func applyOffset(imgSize: CGSize, _ value: CGSize, cropping: CGRect) {
+		self.cropping = cropping
 		let test = CGSize(width: lastOffset.width + value.width, height: lastOffset.height + value.height)
 		if fill {
-			setClampedOffset(imgSize: imgSize, test, cropping: cropping)
+			setClampedOffset(imgSize: imgSize, test)
 		}
 		else {
 			self.offset = test
 		}
 	}
 
-	private mutating func setClampedOffset(imgSize: CGSize, _ test: CGSize, cropping: CGRect) {
+	private mutating func setClampedOffset(imgSize: CGSize, _ test: CGSize) {
 		let renderScale = min(cropping.width / imgSize.width, cropping.height / imgSize.height)
 		let w = imgSize.width * renderScale * scale
 		let h = imgSize.height * renderScale * scale
@@ -63,6 +68,7 @@ public struct CroppingState {
 	/// Applies a scale change centered on an optional anchor point.
 	/// If an anchor is provided, offset is adjusted so that the anchor point remains fixed under the scaled image.
 	public mutating func applyScale(imgSize: CGSize, _ value: CGFloat, cropping: CGRect, anchor: CGPoint? = nil) {
+		self.cropping = cropping
 		let test = lastScale * value
 		// If anchor is provided, adjust offset so anchor remains under gesture
 		if let anchor = anchor {
@@ -71,7 +77,7 @@ public struct CroppingState {
 			let prevAnchor = anchor
 			let anchorInImageBefore = (prevAnchor - prevOffset) / prevScale
 			if fill {
-				setClampedScale(imgSize: imgSize, test, cropping: cropping)
+				setClampedScale(imgSize: imgSize, test)
 			} else {
 				self.scale = test
 			}
@@ -82,14 +88,14 @@ public struct CroppingState {
 			self.offset.height += offsetDelta.height
 		} else {
 			if fill {
-				setClampedScale(imgSize: imgSize, test, cropping: cropping)
+				setClampedScale(imgSize: imgSize, test)
 			} else {
 				self.scale = test
 			}
 		}
 	}
 
-	private mutating func setClampedScale(imgSize: CGSize, _ value: CGFloat, fill: Bool = true, cropping: CGRect) {
+	private mutating func setClampedScale(imgSize: CGSize, _ value: CGFloat, fill: Bool = true) {
 		if fill {
 			let renderScale = min(cropping.width / imgSize.width, cropping.height / imgSize.height)
 			let minScale = max(cropping.width / (imgSize.width * renderScale), cropping.height / (imgSize.height * renderScale), 1.0)
@@ -99,7 +105,7 @@ public struct CroppingState {
 			let maxFitScale = min(cropping.width / (imgSize.width * renderScale), cropping.height / (imgSize.height * renderScale), 1.0)
 			self.scale = min(max(1.0, value), min(maxFitScale, maxScale))
 		}
-		setClampedOffset(imgSize: imgSize, offset, cropping: cropping)
+		setClampedOffset(imgSize: imgSize, offset)
 	}
 
 	public mutating func endDrag() {
@@ -112,17 +118,17 @@ public struct CroppingState {
 		lastScale = scale
 		lastRotation = rotation
 	}
-
+/*
 	public mutating func apply(_ value: CroppingGesture.Value, imgSize: CGSize, cropping: CGRect, anchor: CGPoint? = nil) {
 		applyOffset(imgSize: imgSize, value.translation, cropping: cropping)
 		applyScale(imgSize: imgSize, value.scale, cropping: cropping, anchor: anchor ?? value.location)
 		rotation = lastRotation + value.rotation
 	}
-
+*/
 	public mutating func flipHorizontally() { flipX.toggle() }
 	public mutating func flipVertically() { flipY.toggle() }
 
-	public func render(_ image: UIImage?, _ cropping: CGRect) -> UIImage? {
+	public func render(_ image: UIImage?) -> UIImage? {
 		let squareSize = min(cropping.width, cropping.height)
 		guard let image else { return nil }
 		let imgSize = image.size

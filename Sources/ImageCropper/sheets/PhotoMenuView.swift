@@ -124,7 +124,7 @@ public struct PhotoMenuView: View {
 		.alert("Clear Photo", isPresented: $state.isPhotoClearPresented) {
 			Button("Clear", role: .destructive) {
 				DispatchQueue.main.async {
-					state.importedImage = nil
+					self.image = nil
 				}
 			}
 			Button("Cancel", role: .cancel) { }

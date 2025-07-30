@@ -25,6 +25,42 @@ public struct PhotoMenuView: View {
 		public init(rawValue: Int) {
 			self.rawValue = rawValue
 		}
+
+		static var canShowPhotos: Bool {
+#if os(iOS) || os(tvOS) || os(visionOS)
+			if #available(iOS 14, tvOS 14, visionOS 1, *) {
+				return true
+			}
+			return false
+#elseif os(macOS)
+			if #available(macOS 12, *) {
+				return true
+			}
+			return false
+#else
+			return false
+#endif
+		}
+
+		@MainActor
+		static var canShowCamera: Bool {
+#if os(iOS) || os(visionOS)
+			return UIImagePickerController.isSourceTypeAvailable(.camera)
+#else
+			return false
+#endif
+		}
+
+		static var canShowFiles: Bool {
+#if os(iOS) || os(macOS) || os(visionOS)
+			if #available(iOS 14, macOS 11, visionOS 1, *) {
+				return true
+			}
+			return false
+#else
+			return false
+#endif
+		}
 	}
 
 	@Binding private var image: UIImage?
@@ -39,17 +75,17 @@ public struct PhotoMenuView: View {
 
 	public var body: some View {
 		Menu("Select Photo") {
-			if options.contains(.photos) {
+			if options.contains(.photos) && MenuOptions.canShowPhotos {
 				Button(action: { state.isPickerPresented = true }) {
 					Label("Photos", systemImage: "photo.on.rectangle")
 				}
 			}
-			if options.contains(.camera) {
+			if options.contains(.camera) && MenuOptions.canShowCamera {
 				Button(action: { state.isCameraPresented = true }) {
 					Label("Camera", systemImage: "camera")
 				}
 			}
-			if options.contains(.files) {
+			if options.contains(.files) && MenuOptions.canShowFiles {
 				Button(action: { state.isFileImporterPresented = true }) {
 					Label("Files", systemImage: "folder")
 				}
@@ -131,3 +167,4 @@ public struct PhotoMenuView: View {
 		}
 	}
 }
+
